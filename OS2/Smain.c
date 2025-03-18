@@ -42,12 +42,6 @@ void sig_handler(int signum)
         PARENTTERM = 1;
     }
 
-    if (child_pids == NULL)
-    {
-        fprintf(stderr, "Error: child_pids is NULL in signal handler.\n");
-        return;
-    }
-
     // Forward the signal to all child processes
     for (int i = 0; i < N; i++)
     {
@@ -191,7 +185,14 @@ int main(int argc, char *argv[])
         if ((WIFSIGNALED(status) || WEXITSTATUS(status) != 0) && !PARENTTERM)
         {
             printf("Child %d terminated with status %d\n", child_pid, WEXITSTATUS(status));
-            revive_child(i);
+            for (int j = 0; j < N; j++)
+            {
+                if (child_pids[j] == child_pid) // Found the correct index
+                {
+                    revive_child(j); // Pass the correct index to revive_child
+                    break;
+                }
+            }
         }
         else
         {

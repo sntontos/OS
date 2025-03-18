@@ -3,14 +3,16 @@
 #include <signal.h>
 #include <unistd.h>
 #include <string.h>
+#include <time.h>
 
 int count = 0;
+long start;
 // Signal handler for SIGALRM
 void sig_handler(int signum) {
 
     if(signum == SIGALRM)
     {
-        printf("PPID: %d | PID: %d | Count: %d\n", getppid(), getpid(), count);
+        printf("PPID: %d | PID: %d | Count: %d | Time: %ld \n", getppid(), getpid(), count, (time(NULL)-start));
         alarm(10);
     }
 
@@ -32,6 +34,8 @@ void sig_handler(int signum) {
 }
 
 int main() {
+    time_t tstart = time(NULL);
+    start = tstart;
     // Register the alarm handler for SIGALRM, SIGUSR1, SIGUSR2, SIGTERM
     struct sigaction sigac;
     memset(&sigac, 0, sizeof(sigac));
